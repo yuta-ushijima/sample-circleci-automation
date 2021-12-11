@@ -43,12 +43,15 @@ jobs:
     executor: ansible-playbook/default
     steps:
       - checkout
+      - add_ssh_keys:  
+          fingerprints:  
+            - "be:a0:93:38:73:89:09:dc:0b:30:1e:25:59:21:1c:76" 
       - ansible-playbook/install:
           version: "2.9.23"
       - ansible-playbook/playbook:
           playbook: "playbook.yml"
           inventory: ANSIBLE_INVENTORY
-          playbook-options: "-u ec2-user --private-key ~/.ssh/id_rsa"
+          playbook-options: "-u ec2-user --private-key ~/.ssh/id_rsa -i hosts/inventory"
 
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
