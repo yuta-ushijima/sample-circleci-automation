@@ -59,7 +59,7 @@ workflows:
       - aws-cli-example:
           requires:
             - say-hello
-      - ansible:
+      - ansible-execute:
           requires:
             - say-hello
             - aws-cli-example
