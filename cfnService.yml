@@ -148,25 +148,6 @@ Resources:
         - Key: Name
           Value: raisetech-live10-sg
 
-  # RDS用セキュリティグループの定義
-  RaiseTechLive10RdsSecurityGroup:
-    Type: AWS::EC2::SecurityGroup
-    Properties:
-      VpcId: !Ref RaiseTechLive10VPC
-      GroupDescription: This Security Group is for RDS of RaiseTechLive10
-      SecurityGroupIngress:
-        - IpProtocol: tcp
-          FromPort: 3306
-          ToPort: 3306
-          SourceSecurityGroupId: !Ref RaiseTechLive10SecurityGroup
-      SecurityGroupEgress:
-        - IpProtocol: -1
-          CidrIp: 0.0.0.0/0
-      Tags:
-        - Key: Name
-          Value: raisetech-live10-sg-for-rds
-
-
   # ElasticIp定義
   RaisetechLive10EIP:
     Type: AWS::EC2::EIPAssociation
@@ -182,7 +163,7 @@ Resources:
       SubnetId: !Ref RaiseTechLive10PublicSubnet1a
       InstanceType: t2.small
       AvailabilityZone: ap-northeast-1a
-      KeyName: id_rsa
+      KeyName: key-20211204
       Monitoring: false
       # ここのAMIはマネジメントコンソールから確認可能
       # 中身はAmazon Linux2
