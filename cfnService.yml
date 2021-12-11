@@ -182,7 +182,7 @@ Resources:
       SubnetId: !Ref RaiseTechLive10PublicSubnet1a
       InstanceType: t2.small
       AvailabilityZone: ap-northeast-1a
-      KeyName: id_rsa
+      KeyName: key-20211204
       Monitoring: false
       # ここのAMIはマネジメントコンソールから確認可能
       # 中身はAmazon Linux2
