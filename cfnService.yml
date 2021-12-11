@@ -173,5 +173,5 @@ Resources:
         - !Ref RaiseTechLive10SecurityGroup
       Tags:
         - Key: Name
-          Value: RaiseTechLive10Ec21a
+          Value: RaiseTechLive10Ec21A
 
