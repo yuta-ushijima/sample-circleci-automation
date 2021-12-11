@@ -18,7 +18,7 @@ host = ENV['TARGET_HOST']
 
 options = Net::SSH::Config.for(host)
 
-options[:user] ||= Etc.getlogin
+options[:user] = "ec2-user"
 options[:keys] = "~/.ssh/id_rsa"
 
 set :host,        options[:host_name] || host
