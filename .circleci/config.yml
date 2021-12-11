@@ -33,10 +33,10 @@ jobs:
           aws-region: AWS_DEFAULT_REGION
       - run:
           name: "create Stack"
-          command: "aws cloudformation create-stack --stack-name cfnService --region ap-northeast-1 --template-body file://cfnService.yml"
+          command: "aws cloudformation update-stack --stack-name cfnService --region ap-northeast-1 --template-body file://cfnService.yml"
       - run:
           name: "Wait Stack Complete"
-          command: "aws cloudformation wait stack-create-complete --stack-name cfnService"
+          command: "aws cloudformation wait stack-update-complete --stack-name cfnService"
     
 
 # Invoke jobs via workflows
