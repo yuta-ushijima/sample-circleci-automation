@@ -77,12 +77,11 @@ jobs:
 workflows:
   say-hello-workflow:
     jobs:
-      - serverspec-execute
-      - say-hello
-      - aws-cli-example:
-          requires:
-            - say-hello
+      - aws-cli-example
       - ansible-execute:
           requires:
-            - say-hello
             - aws-cli-example
+      - serverspec-execute:
+          requires:
+            - aws-cli-example
+            - ansible-execute
