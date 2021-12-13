@@ -8,38 +8,44 @@ orbs:
   aws-cli: circleci/aws-cli@2.0.6
   ansible-playbook: orbss/ansible-playbook@0.0.5
   ruby: circleci/ruby@1.2.0
+  jq: circleci/jq@2.2.0
 
 # Define a job to be invoked later in a workflow.
 # See: https://circleci.com/docs/2.0/configuration-reference/#jobs
 jobs:
-  say-hello:
-    # Specify the execution environment. You can specify an image from Dockerhub or use one of our Convenience Images from CircleCI's Developer Hub.
-    # See: https://circleci.com/docs/2.0/configuration-reference/#docker-machine-macos-windows-executor
-    docker:
-      - image: cimg/base:stable
-    # Add steps to the job
-    # See: https://circleci.com/docs/2.0/configuration-reference/#steps
-    steps:
-      - checkout
-      - run:
-          name: "Say hello"
-          command: "echo Hello, World!"
-  
-  aws-cli-example:
+  cloudformation-execute:
+    parameters:
+      stack_finished_check:
+        type: boolean
+        default: false
+      stack_check:
+        type: boolean
+        default: false
     executor: aws-cli/default
     steps:
       - checkout
+      - jq/install
       - aws-cli/setup:
           aws-access-key-id: AWS_ACCESS_KEY_ID
           aws-secret-access-key: AWS_SECRET_ACCESS_KEY
           aws-region: AWS_DEFAULT_REGION
       - run:
-          name: "Update Stack"
-          command: "aws cloudformation update-stack --stack-name cfnService --region ap-northeast-1 --template-body file://cfnService.yml"
-      - run:
-          name: "Wait Stack Complete"
-          command: "aws cloudformation wait stack-update-complete --stack-name cfnService"
-    
+          name: "Check stack exsit"
+          command: "sh scripts/check_stack_exist.sh"
+          stack_check: STACK_EXIST_FLAG
+      - when:
+          condition: << parameters.stack_check >>
+          steps:
+            - run:
+                name: "create Stack"
+                command: "scripts/create_stack.sh"
+      - unless:
+          condition: << parameters.stack_check >>
+          steps:
+            - run:
+                name: "update stack"
+                command: "sh scripts/update_stack.sh"
+
   ansible-execute:
     executor: ansible-playbook/default
     steps:
@@ -75,13 +81,13 @@ jobs:
 # Invoke jobs via workflows
 # See: https://circleci.com/docs/2.0/configuration-reference/#workflows
 workflows:
-  say-hello-workflow:
+  circleci-automation-workflow:
     jobs:
-      - aws-cli-example
+      - cloudformation-execute
       - ansible-execute:
           requires:
-            - aws-cli-example
+            - cloudformation-execute
       - serverspec-execute:
           requires:
-            - aws-cli-example
+            - cloudformation-execute
             - ansible-execute
