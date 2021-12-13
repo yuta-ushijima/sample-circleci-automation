@@ -1,6 +1,7 @@
-if [ `aws cloudformation list-stacks --stack-status-filter CREATE_COMPLETE | jq '.StackSummaries[].StackName' | grep 'cfnService'` ]; then
-  echo "export STACK_EXIST_FLAG='true'" >> $BASH_ENV
+aws cloudformation update-stack --stack-name cfnService --region ap-northeast-1 --template-body file://cfnService.yml
+RESULT="$?"
+if [ "$RESULT" = "254" ]; then
+  exit 0
 else
-  echo "export STACK_EXIST_FLAG='false'" >> $BASH_ENV
+  aws cloudformation wait stack-update-complete --stack-name cfnService
 fi
-echo "${STACK_EXIST_FLAG}"
